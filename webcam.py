@@ -9,6 +9,7 @@ control_client = ControllerClient("pipoulets.internet-box.ch", 1936)
 
 def handle_signal(sig, frame):
     camera_stream.stop()
+    control_client.stop()
     sys.exit(0)
 
 signal.signal(signal.SIGINT, handle_signal)

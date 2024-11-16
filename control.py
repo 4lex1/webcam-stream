@@ -19,6 +19,7 @@ class ControllerServer:
 
     def _start_thread(self):
         while self.running:
+            print("hello")
             message, client_address = self.sock.recvfrom(1024)
             decoded_message = message.decode()
             if (decoded_message == "ready_for_command"):
@@ -33,6 +34,7 @@ class ControllerClient:
         self.ip = ip
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.settimeout(3)
 
     def start(self):
         self.running = True
