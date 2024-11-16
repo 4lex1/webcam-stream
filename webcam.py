@@ -17,7 +17,7 @@ if not cap.isOpened():
 encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 50]
 while True:
     ret, frame = cap.read()
-    image = cv2.resize(frame (640, 480))
+    image = cv2.resize(frame, (640, 480))
     _, image = cv2.imencode('.jpg', image, encode_param)
 
     encoded_image_bytes = image.tobytes()
