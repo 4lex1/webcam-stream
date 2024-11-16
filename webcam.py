@@ -1,12 +1,11 @@
-import cv2
-import socket
-import numpy as np
 import time
 import signal
 import sys
-from camera_stream import CameraStream
+from camera_stream import CameraStreamClient
+from control import ControllerClient
 
-camera_stream = CameraStream("pipoulets.internet-box.ch", 1935)
+camera_stream = CameraStreamClient("pipoulets.internet-box.ch", 1935)
+control_client = ControllerClient("pipoulets.internet-box.ch", 1936)
 
 def handle_signal(sig, frame):
     camera_stream.stop()
@@ -15,6 +14,7 @@ def handle_signal(sig, frame):
 signal.signal(signal.SIGINT, handle_signal)
 
 camera_stream.start()
+control_client.start()
 
 while True:
     time.sleep(10)
