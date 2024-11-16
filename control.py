@@ -9,7 +9,7 @@ class ControllerServer:
         self.running = False
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(("0.0.0.0", port))
-        self.sock.timeout(3)
+        self.sock.settimeout(3)
 
     def start(self):
         self.running = True
@@ -47,11 +47,12 @@ class ControllerClient:
     def _start_thread(self):
         while self.running:
             try:
-                print("ready for command")
+                print(f"sendind ready to {self.ip}:{self.port}")
                 self.sock.sendto("ready_for_command", (self.ip, self.port))
                 response, addr = self.sock.recvfrom(1024)
                 print(f"Réponse reçue de {addr}: {response.decode()}")
-            except:
+            except Exception as e:
+                print(e)
                 pass
 
             time.sleep(1)
