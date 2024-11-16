@@ -80,6 +80,13 @@ class MainWindow(QWidget):
         quality_layout.addWidget(quality_button)
         layout.addLayout(quality_layout)
 
+        reboot_layout = QHBoxLayout()
+        reboot_button = QPushButton("Redémarrer")
+        reboot_button.clicked.connect(self.reboot)
+
+        reboot_layout.addWidget(reboot_button)
+        layout.addLayout(reboot_layout)
+
         self.setLayout(layout)
 
         self.camera_stream.start()
@@ -118,6 +125,8 @@ class MainWindow(QWidget):
         self.image_window.close()
         event.accept()
 
+    def reboot(self):
+        self.control_server.queue_command("reboot")
 
 app = QApplication([])
 window = MainWindow()

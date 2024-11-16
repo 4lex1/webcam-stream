@@ -40,7 +40,7 @@ class ControllerServer:
         self.q.put(command)
 
 class ControllerClient:
-    def __init__(self, ip, port, on_resize=None, on_framerate=None, on_quality=None):
+    def __init__(self, ip, port, on_resize=None, on_framerate=None, on_quality=None, on_reboot=None):
         self.thread = threading.Thread(target=self._start_thread)
         self.running = False
         self.ip = ip
@@ -50,6 +50,7 @@ class ControllerClient:
         self.on_resize = on_resize
         self.on_framerate = on_framerate
         self.on_quality = on_quality
+        self.on_reboot = on_reboot
 
     def start(self):
         self.running = True
@@ -78,6 +79,8 @@ class ControllerClient:
                     _, quality = decoded_response.split("_")
                     quality = int(quality)
                     self.on_quality(quality)
+                elif self.on_reboot and decoded_response == "reboot":
+                    self.on_reboot()
             except Exception as e:
                 print(e)
                 pass

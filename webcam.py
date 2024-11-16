@@ -1,6 +1,7 @@
 import time
 import signal
 import sys
+import os
 from camera_stream import CameraStreamClient
 from control import ControllerClient
 
@@ -14,8 +15,14 @@ def on_framerate_handler(framerate):
 def on_quality_handler(quality):
     camera_stream.quality = quality
 
+def on_reboot_handler():
+    os.system("sudo reboot")
+
 camera_stream = CameraStreamClient("pipoulets.internet-box.ch", 1935)
-control_client = ControllerClient("pipoulets.internet-box.ch", 1936, on_resize=on_resize_handler, on_framerate=on_framerate_handler, on_quality=on_quality_handler)
+control_client = ControllerClient("pipoulets.internet-box.ch", 1936, on_resize=on_resize_handler, 
+                                  on_framerate=on_framerate_handler, 
+                                  on_quality=on_quality_handler, 
+                                  on_reboot=on_reboot_handler)
 
 def handle_signal(sig, frame):
     camera_stream.stop()
