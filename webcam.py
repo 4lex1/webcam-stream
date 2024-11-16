@@ -4,8 +4,13 @@ import sys
 from camera_stream import CameraStreamClient
 from control import ControllerClient
 
+def on_resize_handler(width, height):
+    print(f"got resize command for {width}*{height}")
+    camera_stream.width = width
+    camera_stream.height = height
+
 camera_stream = CameraStreamClient("pipoulets.internet-box.ch", 1935)
-control_client = ControllerClient("pipoulets.internet-box.ch", 1936)
+control_client = ControllerClient("pipoulets.internet-box.ch", 1936, on_resize=on_resize_handler)
 
 def handle_signal(sig, frame):
     camera_stream.stop()

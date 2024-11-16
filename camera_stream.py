@@ -6,13 +6,14 @@ import numpy as np
 import time
 
 class CameraStreamServer:
-    def __init__(self, port, width = 640, height = 480):
+    def __init__(self, port, width = 640, height = 480, on_image=None):
         self.thread = threading.Thread(target=self._start_thread)
         self.running = False
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(("0.0.0.0", port))
         self.width = width
         self.height = height
+        self.on_image = on_image
 
     def start(self):
         self.running = True
@@ -27,11 +28,9 @@ class CameraStreamServer:
 
             image_decoded = cv2.imdecode(np.frombuffer(encoded_image_bytes, np.uint8), cv2.IMREAD_COLOR)
             image_decoded = cv2.resize(image_decoded, (self.width, self.height))
-
-            if image_decoded is not None:
-                cv2.imshow('Pipoubike', image_decoded)
             
-            cv2.waitKey(1)
+            if self.on_image and image_decoded is not None:
+                self.on_image(image_decoded)
 
 
 class CameraStreamClient:
