@@ -15,7 +15,7 @@ def on_quality_handler(quality):
     camera_stream.quality = quality
 
 camera_stream = CameraStreamClient("pipoulets.internet-box.ch", 1935)
-control_client = ControllerClient("pipoulets.internet-box.ch", 1936, on_resize=on_resize_handler, on_framerate=on_framerate_handler)
+control_client = ControllerClient("pipoulets.internet-box.ch", 1936, on_resize=on_resize_handler, on_framerate=on_framerate_handler, on_quality=on_quality_handler)
 
 def handle_signal(sig, frame):
     camera_stream.stop()
