@@ -2,28 +2,20 @@ import cv2
 import socket
 import numpy as np
 import time
+import signal
+import sys
+from camera_stream import CameraStream
 
-UDP_IP = "pipoulets.internet-box.ch"
-UDP_PORT = 1935
+camera_stream = CameraStream("pipoulets.internet-box.ch", 1935)
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-cap = cv2.VideoCapture(0)
+def handle_signal(sig, frame):
+    camera_stream.stop()
+    sys.exit(0)
 
-print("opening cap")
-if not cap.isOpened():
-    print("could not open cap")
-    exit()
+signal.signal(signal.SIGINT, handle_signal)
 
-
-encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 20]
+camera_stream.start()
 
 while True:
-    ret, frame = cap.read()
-    image = cv2.resize(frame, (640, 480))
-    _, image = cv2.imencode('.jpg', image, encode_param)
-
-    encoded_image_bytes = image.tobytes()
-    sock.sendto(encoded_image_bytes, (UDP_IP, UDP_PORT))
-    image_decoded = cv2.imdecode(image, cv2.IMREAD_COLOR)
-
-    time.sleep(0.06)
+    time.sleep(10)
+    pass

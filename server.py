@@ -14,6 +14,7 @@ while True:
     encoded_image_bytes, addr = sock.recvfrom(65535) 
 
     image_decoded = cv2.imdecode(np.frombuffer(encoded_image_bytes, np.uint8), cv2.IMREAD_COLOR)
+    image_decoded = cv2.resize(image_decoded, (800, 600))
 
     if image_decoded is not None:
         cv2.imshow('Received Webcam Stream', image_decoded)
