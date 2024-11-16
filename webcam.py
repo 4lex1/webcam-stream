@@ -22,9 +22,7 @@ while True:
     _, image = cv2.imencode('.jpg', image, encode_param)
 
     encoded_image_bytes = image.tobytes()
-    print(f"length: {len(encoded_image_bytes)}")
-    # sock.sendto(encoded_image_bytes, (UDP_IP, UDP_PORT))
-    
+    sock.sendto(encoded_image_bytes, (UDP_IP, UDP_PORT))
     image_decoded = cv2.imdecode(image, cv2.IMREAD_COLOR)
     cv2.imshow('Webcam Stream', image_decoded)
 
