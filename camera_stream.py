@@ -58,6 +58,7 @@ class CameraStreamClient:
             try:
                 _, frame = self.cap.read()
                 image = cv2.resize(frame, (self.width, self.height))
+                cv2.putText(image, f"{self.width}*{self.height} | quality {self.quality}% | {self.framerate} FPS")
                 encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), self.quality]
                 _, image = cv2.imencode('.jpg', image, encode_param)
                 encoded_image_bytes = image.tobytes()
