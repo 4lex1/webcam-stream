@@ -23,7 +23,7 @@ while True:
     encoded_image_bytes = image.tobytes()
     print(f"length: {len(encoded_image_bytes)}")
     # sock.sendto(encoded_image_bytes, (UDP_IP, UDP_PORT))
-    cv2.imshow('Webcam Stream', frame)
+    cv2.imshow('Webcam Stream', image)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
