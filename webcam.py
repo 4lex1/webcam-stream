@@ -15,7 +15,8 @@ if not cap.isOpened():
     exit()
 
 
-encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 50]
+encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 40]
+
 while True:
     ret, frame = cap.read()
     image = cv2.resize(frame, (640, 480))
@@ -24,13 +25,5 @@ while True:
     encoded_image_bytes = image.tobytes()
     sock.sendto(encoded_image_bytes, (UDP_IP, UDP_PORT))
     image_decoded = cv2.imdecode(image, cv2.IMREAD_COLOR)
-    cv2.imshow('Webcam Stream', image_decoded)
 
     time.sleep(0.06)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
-sock.close()
