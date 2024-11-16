@@ -15,7 +15,7 @@ if not cap.isOpened():
     exit()
 
 
-encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 40]
+encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 20]
 
 while True:
     ret, frame = cap.read()
