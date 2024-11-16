@@ -1,6 +1,7 @@
 *.pyc
 *.pyo
 *.pyd
+*.spec
 
 __pycache__/
 dist/
