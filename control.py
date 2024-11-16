@@ -40,7 +40,7 @@ class ControllerServer:
         self.q.put(command)
 
 class ControllerClient:
-    def __init__(self, ip, port, on_resize=None, on_framerate=None):
+    def __init__(self, ip, port, on_resize=None, on_framerate=None, on_quality=None):
         self.thread = threading.Thread(target=self._start_thread)
         self.running = False
         self.ip = ip
@@ -49,6 +49,7 @@ class ControllerClient:
         self.sock.settimeout(3)
         self.on_resize = on_resize
         self.on_framerate = on_framerate
+        self.on_quality = on_quality
 
     def start(self):
         self.running = True
@@ -73,6 +74,10 @@ class ControllerClient:
                     _, framerate = decoded_response.split("_")
                     framerate = int(framerate)
                     self.on_framerate(framerate)
+                elif self.on_quality and decoded_response.startswith("quality"):
+                    _, quality = decoded_response.split("_")
+                    quality = int(quality)
+                    self.on_quality(quality)
             except Exception as e:
                 print(e)
                 pass

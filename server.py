@@ -1,77 +1,22 @@
-import time
-import signal
 import sys
 import cv2
 from camera_stream import CameraStreamServer
 from control import ControllerServer
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QLineEdit, QHBoxLayout
 from PyQt5.QtGui import QPixmap, QImage
 
-class MainWindow(QWidget):
+
+class ImageWindow(QWidget):
     def __init__(self):
         super().__init__()
-
-        self.camera_stream = CameraStreamServer(1935, on_image=self.display_image)
-        self.control_server = ControllerServer(1936)
-
-        # Initialisation de la fenêtre
-        self.setWindowTitle('Changer la taille de la fenêtre')
-        self.setGeometry(100, 100, 640, 480)
-
-        # Layout vertical pour les boutons
-        layout = QVBoxLayout()
-
-        # Création des boutons
-        button_640x480 = QPushButton("640x480")
-        button_800x600 = QPushButton("800x600")
-        button_1024x768 = QPushButton("1024x768")
-        button_framerate_5 = QPushButton("Framerate 5")
-        button_framerate_10 = QPushButton("Framerate 10")
-        button_framerate_15 = QPushButton("Framerate 15")
-        button_framerate_20 = QPushButton("Framerate 20")
-        button_framerate_25 = QPushButton("Framerate 25")
-        button_framerate_30 = QPushButton("Framerate 30")
-
-        # Connecter les boutons aux actions
-        button_640x480.clicked.connect(lambda: self.change_size(640, 480))
-        button_800x600.clicked.connect(lambda: self.change_size(800, 600))
-        button_1024x768.clicked.connect(lambda: self.change_size(1024, 768))
-        button_framerate_5.clicked.connect(lambda:  self.change_framerate(5))
-        button_framerate_10.clicked.connect(lambda: self.change_framerate(10))
-        button_framerate_15.clicked.connect(lambda: self.change_framerate(15))
-        button_framerate_20.clicked.connect(lambda: self.change_framerate(20))
-        button_framerate_25.clicked.connect(lambda: self.change_framerate(25))
-        button_framerate_30.clicked.connect(lambda: self.change_framerate(30))
-
-        # Ajouter les boutons au layout
-        layout.addWidget(button_640x480)
-        layout.addWidget(button_800x600)
-        layout.addWidget(button_1024x768)
-        layout.addWidget(button_framerate_5)
-        layout.addWidget(button_framerate_10)
-        layout.addWidget(button_framerate_15)
-        layout.addWidget(button_framerate_20)
-        layout.addWidget(button_framerate_25)
-        layout.addWidget(button_framerate_30)
+        self.setWindowTitle("Affichage de l'image")
+        self.setGeometry(800, 100, 640, 480)
 
         self.image_label = QLabel(self)
         self.image_label.setText("Aucune image chargée")
+        layout = QVBoxLayout()
         layout.addWidget(self.image_label)
-
-        # Définir le layout de la fenêtre
         self.setLayout(layout)
-
-        self.camera_stream.start()
-        self.control_server.start()
-
-    def change_size(self, width, height):
-        self.camera_stream.width = width
-        self.camera_stream.height = height
-        self.control_server.queue_command(f"resize_{width}_{height}")
-        self.resize(width, height)
-
-    def change_framerate(self, framerate):
-        self.control_server.queue_command(f"framerate_{framerate}")
 
     def display_image(self, cv_img):
         rgb_image = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
@@ -80,12 +25,101 @@ class MainWindow(QWidget):
         qimage = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
         self.image_label.setPixmap(QPixmap.fromImage(qimage))
 
+
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.camera_stream = CameraStreamServer(1935, on_image=self.display_image)
+        self.control_server = ControllerServer(1936)
+
+        self.image_window = ImageWindow()
+        self.image_window.show()
+
+        self.setWindowTitle('Pipoubike')
+        self.setGeometry(100, 100, 400, 300)
+
+        layout = QVBoxLayout()
+
+        layout.addWidget(QLabel("Changer la résolution :"))
+        resolution_layout = QHBoxLayout()
+
+        self.width_input = QLineEdit()
+        self.width_input.setPlaceholderText("Largeur (ex: 640)")
+        self.height_input = QLineEdit()
+        self.height_input.setPlaceholderText("Hauteur (ex: 480)")
+
+        update_resolution_button = QPushButton("Mettre à jour la résolution")
+        update_resolution_button.clicked.connect(self.update_resolution)
+
+        resolution_layout.addWidget(self.width_input)
+        resolution_layout.addWidget(self.height_input)
+        resolution_layout.addWidget(update_resolution_button)
+        layout.addLayout(resolution_layout)
+
+        layout.addWidget(QLabel("Changer le framerate :"))
+        framerate_layout = QHBoxLayout()
+
+        self.framerate_input = QLineEdit()
+        self.framerate_input.setPlaceholderText("Framerate (ex: 30)")
+
+        update_framerate_button = QPushButton("Mettre à jour le framerate")
+        update_framerate_button.clicked.connect(self.update_framerate)
+
+        framerate_layout.addWidget(self.framerate_input)
+        framerate_layout.addWidget(update_framerate_button)
+        layout.addLayout(framerate_layout)
+
+        quality_layout = QHBoxLayout()
+        self.quality_input = QLineEdit()
+        self.quality_input.setPlaceholderText("Qualité (ex: 50)")
+        quality_button = QPushButton("Mettre à jour la qualité")
+        quality_button.clicked.connect(self.update_quality)
+
+        quality_layout.addWidget(self.quality_input)
+        quality_layout.addWidget(quality_button)
+        layout.addLayout(quality_layout)
+
+        self.setLayout(layout)
+
+        self.camera_stream.start()
+        self.control_server.start()
+
+    def update_resolution(self):
+        try:
+            width = int(self.width_input.text())
+            height = int(self.height_input.text())
+            self.camera_stream.width = width
+            self.camera_stream.height = height
+            self.control_server.queue_command(f"resize_{width}_{height}")
+        except ValueError:
+            print("Veuillez entrer des valeurs valides pour la largeur et la hauteur.")
+
+    def update_framerate(self):
+        try:
+            framerate = int(self.framerate_input.text())
+            self.control_server.queue_command(f"framerate_{framerate}")
+        except ValueError:
+            print("Veuillez entrer une valeur valide pour le framerate.")
+
+    def update_quality(self):
+        try:
+            quality = int(self.quality_input.text())
+            self.control_server.queue_command(f"quality_{quality}")
+        except ValueError:
+            print("Veuillez entrer une valeur valide pour la qualité.")
+
+    def display_image(self, cv_img):
+        self.image_window.display_image(cv_img)
+
     def closeEvent(self, event):
         self.camera_stream.stop()
         self.control_server.stop()
+        self.image_window.close()
         event.accept()
+
 
 app = QApplication([])
 window = MainWindow()
-window.show()    
+window.show()
 sys.exit(app.exec_())

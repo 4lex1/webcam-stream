@@ -11,6 +11,9 @@ def on_resize_handler(width, height):
 def on_framerate_handler(framerate):
     camera_stream.framerate = framerate
 
+def on_quality_handler(quality):
+    camera_stream.quality = quality
+
 camera_stream = CameraStreamClient("pipoulets.internet-box.ch", 1935)
 control_client = ControllerClient("pipoulets.internet-box.ch", 1936, on_resize=on_resize_handler, on_framerate=on_framerate_handler)
 
