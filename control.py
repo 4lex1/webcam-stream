@@ -40,7 +40,7 @@ class ControllerServer:
         self.q.put(command)
 
 class ControllerClient:
-    def __init__(self, ip, port, on_resize=None):
+    def __init__(self, ip, port, on_resize=None, on_framerate=None):
         self.thread = threading.Thread(target=self._start_thread)
         self.running = False
         self.ip = ip
@@ -48,6 +48,7 @@ class ControllerClient:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.settimeout(3)
         self.on_resize = on_resize
+        self.on_framerate = on_framerate
 
     def start(self):
         self.running = True
@@ -60,14 +61,18 @@ class ControllerClient:
         while self.running:
             try:
                 self.sock.sendto(b"ready_for_command", (self.ip, self.port))
-                response, addr = self.sock.recvfrom(1024)
+                response, _ = self.sock.recvfrom(1024)
                 decoded_response = response.decode()
-                if decoded_response == "resize_640_480":
-                    self.on_resize(640, 480)
-                elif decoded_response == "resize_800_600":
-                    self.on_resize(800, 600)
-                elif decoded_response == "resize_1024_768":
-                    self.on_resize(1024, 768)
+
+                if self.on_resize and decoded_response.startswith("resize"):
+                    _, width, height = decoded_response.split("_")
+                    width = int(width)
+                    height = int(height)
+                    self.on_resize(width, height)
+                elif self.on_framerate and decoded_response.startswith("framerate"):
+                    _, framerate = decoded_response.split("_")
+                    framerate = int(framerate)
+                    self.on_framerate(framerate)
             except Exception as e:
                 print(e)
                 pass

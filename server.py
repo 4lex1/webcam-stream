@@ -47,8 +47,13 @@ class MainWindow(QWidget):
         self.control_server.start()
 
     def change_size(self, width, height):
-        self.resize(width, height)
+        self.camera_stream.width = width
+        self.camera_stream.height = height
         self.control_server.queue_command(f"resize_{width}_{height}")
+        self.resize(width, height)
+
+    def change_framerate(self, framerate):
+        self.control_server.queue_command(f"framerate_{framerate}")
 
     def display_image(self, cv_img):
         rgb_image = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
