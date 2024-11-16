@@ -1,6 +1,7 @@
 import cv2
 import socket
 import numpy as np
+import time
 
 UDP_IP = "pipoulets.internet-box.ch"
 UDP_PORT = 1935
@@ -26,6 +27,8 @@ while True:
     
     image_decoded = cv2.imdecode(image, cv2.IMREAD_COLOR)
     cv2.imshow('Webcam Stream', image_decoded)
+
+    time.sleep(0.06)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
