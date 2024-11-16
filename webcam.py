@@ -13,11 +13,14 @@ if not cap.isOpened():
     print("could not open cap")
     exit()
 
+
+encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 50]
 while True:
     ret, frame = cap.read()
-    _, encoded_image = cv2.imencode('.jpg', frame)
+    _, image = cv2.imencode('.jpg', frame, encode_param)
+    image = cv2.resize(image (640, 480))
 
-    encoded_image_bytes = encoded_image.tobytes()
+    encoded_image_bytes = image.tobytes()
     print(f"length: {len(encoded_image_bytes)}")
     # sock.sendto(encoded_image_bytes, (UDP_IP, UDP_PORT))
     cv2.imshow('Webcam Stream', frame)
