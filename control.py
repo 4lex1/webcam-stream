@@ -48,7 +48,7 @@ class ControllerClient:
         while self.running:
             try:
                 print(f"sendind ready to {self.ip}:{self.port}")
-                self.sock.sendto("ready_for_command", (self.ip, self.port))
+                self.sock.sendto(b"ready_for_command", (self.ip, self.port))
                 response, addr = self.sock.recvfrom(1024)
                 print(f"Réponse reçue de {addr}: {response.decode()}")
             except Exception as e:
