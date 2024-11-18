@@ -27,14 +27,13 @@ class CameraStreamServer:
             encoded_image_bytes, _ = self.sock.recvfrom(65535) 
 
             image_decoded = cv2.imdecode(np.frombuffer(encoded_image_bytes, np.uint8), cv2.IMREAD_COLOR)
-            image_decoded = cv2.resize(image_decoded, (self.width, self.height))
             
             if self.on_image and image_decoded is not None:
                 self.on_image(image_decoded)
 
 
 class CameraStreamClient:
-    def __init__(self, ip, port, width = 640, height = 480, quality = 50, framerate = 15):
+    def __init__(self, ip, port, width = 640, height = 480, quality = 10, framerate = 10):
         self.thread = threading.Thread(target=self._start_thread)
         self.running = False
         self.ip = ip
@@ -58,6 +57,7 @@ class CameraStreamClient:
             try:
                 _, frame = self.cap.read()
                 image = cv2.resize(frame, (self.width, self.height))
+                cv2.putText(image, f"{self.width}*{self.height} | quality {self.quality}% | {self.framerate} FPS", (30, 30), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 0, 0), 3, cv2.LINE_AA)
                 cv2.putText(image, f"{self.width}*{self.height} | quality {self.quality}% | {self.framerate} FPS", (30, 30), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 0), 1, cv2.LINE_AA)
                 _, image = cv2.imencode('.webp', image, [cv2.IMWRITE_WEBP_QUALITY, self.quality])
                 encoded_image_bytes = image.tobytes()

@@ -45,9 +45,11 @@ class MainWindow(QWidget):
         resolution_layout = QHBoxLayout()
 
         self.width_input = QLineEdit()
-        self.width_input.setPlaceholderText("Largeur (ex: 640)")
+        self.width_input.setPlaceholderText("Largeur")
+        self.width_input.setText("640")
         self.height_input = QLineEdit()
-        self.height_input.setPlaceholderText("Hauteur (ex: 480)")
+        self.height_input.setPlaceholderText("Hauteur")
+        self.height_input.setText("480")
 
         update_resolution_button = QPushButton("Mettre à jour la résolution")
         update_resolution_button.clicked.connect(self.update_resolution)
@@ -61,7 +63,8 @@ class MainWindow(QWidget):
         framerate_layout = QHBoxLayout()
 
         self.framerate_input = QLineEdit()
-        self.framerate_input.setPlaceholderText("Framerate (ex: 30)")
+        self.framerate_input.setPlaceholderText("Framerate")
+        self.framerate_input.setText("10")
 
         update_framerate_button = QPushButton("Mettre à jour le framerate")
         update_framerate_button.clicked.connect(self.update_framerate)
@@ -72,7 +75,8 @@ class MainWindow(QWidget):
 
         quality_layout = QHBoxLayout()
         self.quality_input = QLineEdit()
-        self.quality_input.setPlaceholderText("Qualité (ex: 50)")
+        self.quality_input.setPlaceholderText("Qualité")
+        self.quality_input.setText("10")
         quality_button = QPushButton("Mettre à jour la qualité")
         quality_button.clicked.connect(self.update_quality)
 
