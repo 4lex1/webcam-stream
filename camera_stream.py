@@ -59,8 +59,7 @@ class CameraStreamClient:
                 _, frame = self.cap.read()
                 image = cv2.resize(frame, (self.width, self.height))
                 cv2.putText(image, f"{self.width}*{self.height} | quality {self.quality}% | {self.framerate} FPS", (30, 30), cv2.FONT_HERSHEY_SIMPLEX,  1, (0, 255, 0), 1, cv2.LINE_AA)
-                encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), self.quality]
-                _, image = cv2.imencode('.jpg', image, encode_param)
+                _, image = cv2.imencode('.webp', image, [cv2.IMWRITE_WEBP_QUALITY, self.quality])
                 encoded_image_bytes = image.tobytes()
                 self.sock.sendto(encoded_image_bytes, (self.ip, self.port))
             except Exception as e:
